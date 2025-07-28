@@ -110,4 +110,12 @@ The application follows a clean separation of concerns with a well-defined inter
 - ✓ Resolved CSS and component import issues for proper app functionality
 
 ### Current Status
-The prepaid card tracker is fully functional with local storage, transaction management, and mobile-responsive design. All core features are working including adding/deleting cards, recording transactions, and real-time balance tracking.
+The prepaid card tracker is fully functional with local storage, transaction management, mobile-responsive design, and archive functionality. All core features are working including adding/deleting cards, recording transactions, real-time balance tracking, and manual card archiving.
+
+### January 28, 2025 - Archive Functionality Update
+- ✓ Added manual archive/unarchive functionality for cards
+- ✓ Created Active/Archived tabs in main card list view
+- ✓ Added visual indicators for archived cards (grayed out, archive icon)
+- ✓ Archive option available for any card regardless of balance
+- ✓ Archive/restore options in card dropdown menu with toast notifications
+- ✓ Enhanced storage service with backward compatibility for existing cards

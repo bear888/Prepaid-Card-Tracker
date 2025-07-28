@@ -100,13 +100,9 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
                 Restore Card
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem 
-                onClick={handleArchive}
-                disabled={balance > 0}
-              >
+              <DropdownMenuItem onClick={handleArchive}>
                 <Archive className="w-4 h-4 mr-2" />
                 Archive Card
-                {balance > 0 && <span className="text-xs text-gray-500 ml-2">(Balance must be $0.00)</span>}
               </DropdownMenuItem>
             )}
             <DropdownMenuItem onClick={handleDelete} className="text-red-600">

@@ -13,7 +13,12 @@ export class LocalStorageService {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        this.cards = JSON.parse(stored);
+        const parsedCards = JSON.parse(stored);
+        // Ensure all cards have isArchived property for backward compatibility
+        this.cards = parsedCards.map((card: any) => ({
+          ...card,
+          isArchived: card.isArchived || false
+        }));
       }
     } catch (error) {
       console.error("Error loading cards from storage:", error);
