@@ -52,7 +52,8 @@ export default function CardDetail() {
     );
   }
 
-  const balance = storage.getBalance(card);
+  // Recalculate balance each time card state changes
+  const balance = card ? storage.getBalance(card) : 0;
 
   return (
     <>
@@ -90,7 +91,7 @@ export default function CardDetail() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4" key={`balance-${balance}-${card.transactions.length}`}>
           <div>
             <p className="text-blue-100 text-sm">Current Balance</p>
             <p className="text-3xl font-bold">${balance.toFixed(2)}</p>
@@ -124,7 +125,7 @@ export default function CardDetail() {
           </div>
         ) : (
           /* Transaction Items */
-          <div className="space-y-3">
+          <div className="space-y-3" key={`transactions-${card.transactions.length}-${card.id}`}>
             {card.transactions.map((transaction) => (
               <TransactionItem
                 key={transaction.id}
