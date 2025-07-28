@@ -1,8 +1,10 @@
-import { Minus, Edit } from "lucide-react";
+import { Minus, Edit, MoreHorizontal } from "lucide-react";
+import { useState } from "react";
 import { Transaction } from "@shared/schema";
 import { storage } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import EditTransactionModal from "@/components/edit-transaction-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,9 +16,11 @@ interface TransactionItemProps {
   transaction: Transaction;
   cardId: string;
   onDelete: () => void;
+  onEdit?: () => void;
 }
 
-export default function TransactionItem({ transaction, cardId, onDelete }: TransactionItemProps) {
+export default function TransactionItem({ transaction, cardId, onDelete, onEdit }: TransactionItemProps) {
+  const [showEditModal, setShowEditModal] = useState(false);
   const { toast } = useToast();
   
   const handleDelete = () => {
@@ -35,6 +39,15 @@ export default function TransactionItem({ transaction, cardId, onDelete }: Trans
         variant: "destructive",
       });
     }
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowEditModal(true);
+  };
+
+  const handleTransactionUpdated = () => {
+    if (onEdit) onEdit();
   };
 
   const formatDate = (dateString: string) => {
@@ -86,16 +99,29 @@ export default function TransactionItem({ transaction, cardId, onDelete }: Trans
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="p-1 text-gray-400 hover:text-gray-600">
-              <Edit className="w-4 h-4" />
+              <MoreHorizontal className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
+            <DropdownMenuItem onClick={handleEdit}>
+              <Edit className="w-4 h-4 mr-2" />
+              Edit Transaction
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+              <Minus className="w-4 h-4 mr-2" />
               Delete Transaction
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <EditTransactionModal
+        transaction={transaction}
+        cardId={cardId}
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onTransactionUpdated={handleTransactionUpdated}
+      />
     </div>
   );
 }

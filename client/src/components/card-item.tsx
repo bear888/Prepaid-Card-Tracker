@@ -1,9 +1,11 @@
-import { MoreHorizontal, CreditCard, Archive, ArchiveRestore } from "lucide-react";
+import { MoreHorizontal, CreditCard, Archive, ArchiveRestore, Edit } from "lucide-react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { Card } from "@shared/schema";
 import { storage } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import EditCardModal from "@/components/edit-card-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +21,7 @@ interface CardItemProps {
 
 export default function CardItem({ card, onDelete, onArchiveChange }: CardItemProps) {
   const [, setLocation] = useLocation();
+  const [showEditModal, setShowEditModal] = useState(false);
   const { toast } = useToast();
   const balance = storage.getBalance(card);
   const usagePercentage = storage.getUsagePercentage(card);
@@ -53,6 +56,15 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
         description: `${card.name} has been moved back to active cards.`,
       });
     }
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowEditModal(true);
+  };
+
+  const handleCardUpdated = () => {
+    onArchiveChange(); // Refresh the card list
   };
 
   return (
@@ -94,6 +106,10 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
+            <DropdownMenuItem onClick={handleEdit}>
+              <Edit className="w-4 h-4 mr-2" />
+              Edit Card
+            </DropdownMenuItem>
             {card.isArchived ? (
               <DropdownMenuItem onClick={handleUnarchive}>
                 <ArchiveRestore className="w-4 h-4 mr-2" />
@@ -136,6 +152,13 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
           />
         </div>
       </div>
+
+      <EditCardModal
+        card={card}
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onCardUpdated={handleCardUpdated}
+      />
     </div>
   );
 }

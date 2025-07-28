@@ -132,6 +132,7 @@ export default function CardDetail() {
                 transaction={transaction}
                 cardId={card.id}
                 onDelete={handleTransactionDeleted}
+                onEdit={handleTransactionDeleted}
               />
             ))}
           </div>

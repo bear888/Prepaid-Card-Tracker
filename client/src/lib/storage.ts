@@ -64,14 +64,7 @@ export class LocalStorageService {
     return card;
   }
 
-  updateCard(id: string, updates: Partial<InsertCard>): Card | null {
-    const cardIndex = this.cards.findIndex(card => card.id === id);
-    if (cardIndex === -1) return null;
 
-    this.cards[cardIndex] = { ...this.cards[cardIndex], ...updates };
-    this.saveCards();
-    return this.cards[cardIndex];
-  }
 
   deleteCard(id: string): boolean {
     const cardIndex = this.cards.findIndex(card => card.id === id);
@@ -134,6 +127,32 @@ export class LocalStorageService {
     if (!card) return false;
 
     card.isArchived = false;
+    this.saveCards();
+    return true;
+  }
+
+  updateCard(id: string, updates: Partial<Pick<Card, 'name' | 'number' | 'initialValue'>>): boolean {
+    const card = this.getCard(id);
+    if (!card) return false;
+
+    if (updates.name !== undefined) card.name = updates.name;
+    if (updates.number !== undefined) card.number = updates.number;
+    if (updates.initialValue !== undefined) card.initialValue = updates.initialValue;
+
+    this.saveCards();
+    return true;
+  }
+
+  updateTransaction(cardId: string, transactionId: string, updates: Partial<Pick<Transaction, 'description' | 'amount'>>): boolean {
+    const card = this.getCard(cardId);
+    if (!card) return false;
+
+    const transaction = card.transactions.find(t => t.id === transactionId);
+    if (!transaction) return false;
+
+    if (updates.description !== undefined) transaction.description = updates.description;
+    if (updates.amount !== undefined) transaction.amount = updates.amount;
+
     this.saveCards();
     return true;
   }
