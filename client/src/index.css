@@ -62,7 +62,14 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased bg-background text-foreground touch-manipulation tap-highlight-none no-bounce;
+  }
+
+  /* PWA full-screen adjustments */
+  @media (display-mode: standalone) {
+    body {
+      padding-top: env(safe-area-inset-top);
+    }
   }
 }
 
@@ -73,5 +80,46 @@
   
   .shadow-material-lg {
     box-shadow: 0 4px 8px rgba(0,0,0,0.12), 0 12px 24px rgba(0,0,0,0.15);
+  }
+
+  /* PWA and mobile-specific utilities */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .select-none {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Disable iOS bounce effect */
+  .no-bounce {
+    overscroll-behavior-y: contain;
+  }
+  
+  /* PWA status bar spacing */
+  .pwa-header {
+    padding-top: max(1rem, env(safe-area-inset-top));
   }
 }
