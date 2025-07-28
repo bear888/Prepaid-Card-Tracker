@@ -9,27 +9,61 @@ export default function CardList() {
   const [cards, setCards] = useState<Card[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
 
+  const [showArchived, setShowArchived] = useState(false);
+
+  const loadCards = () => {
+    if (showArchived) {
+      setCards(storage.getArchivedCards());
+    } else {
+      setCards(storage.getActiveCards());
+    }
+  };
+
   useEffect(() => {
-    setCards(storage.getAllCards());
-  }, []);
+    loadCards();
+  }, [showArchived]);
 
   const handleCardAdded = () => {
-    setCards(storage.getAllCards());
+    loadCards();
     setShowAddModal(false);
   };
 
   const handleCardDeleted = () => {
-    setCards(storage.getAllCards());
+    loadCards();
   };
 
   return (
     <>
       {/* Header */}
       <header className="bg-primary text-white p-4 shadow-material sticky top-0 z-10">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-medium">My Cards</h1>
           <button className="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors">
             <i className="fas fa-ellipsis-v"></i>
+          </button>
+        </div>
+        
+        {/* Archive Toggle */}
+        <div className="flex space-x-1 bg-white bg-opacity-20 rounded-lg p-1">
+          <button
+            onClick={() => setShowArchived(false)}
+            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              !showArchived 
+                ? 'bg-white text-primary' 
+                : 'text-white hover:bg-white hover:bg-opacity-20'
+            }`}
+          >
+            Active ({storage.getActiveCards().length})
+          </button>
+          <button
+            onClick={() => setShowArchived(true)}
+            className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+              showArchived 
+                ? 'bg-white text-primary' 
+                : 'text-white hover:bg-white hover:bg-opacity-20'
+            }`}
+          >
+            Archived ({storage.getArchivedCards().length})
           </button>
         </div>
       </header>
@@ -41,17 +75,24 @@ export default function CardList() {
             /* Empty State */
             <div className="text-center py-12 px-6">
               <i className="fas fa-credit-card text-6xl text-gray-300 mb-4"></i>
-              <h3 className="text-lg font-medium text-gray-600 mb-2">No Cards Added Yet</h3>
+              <h3 className="text-lg font-medium text-gray-600 mb-2">
+                {showArchived ? "No Archived Cards" : "No Cards Added Yet"}
+              </h3>
               <p className="text-gray-500 mb-6">
-                Add your first prepaid card to start tracking your balance and transactions
+                {showArchived 
+                  ? "Cards you archive will appear here" 
+                  : "Add your first prepaid card to start tracking your balance and transactions"
+                }
               </p>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="bg-primary text-white px-6 py-3 rounded-lg font-medium shadow-material hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="inline w-4 h-4 mr-2" />
-                Add Your First Card
-              </button>
+              {!showArchived && (
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="bg-primary text-white px-6 py-3 rounded-lg font-medium shadow-material hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="inline w-4 h-4 mr-2" />
+                  Add Your First Card
+                </button>
+              )}
             </div>
           ) : (
             /* Card List */
@@ -60,14 +101,15 @@ export default function CardList() {
                 key={card.id}
                 card={card}
                 onDelete={handleCardDeleted}
+                onArchiveChange={loadCards}
               />
             ))
           )}
         </div>
       </main>
 
-      {/* Floating Action Button */}
-      {cards.length > 0 && (
+      {/* Floating Action Button - Only show for active cards */}
+      {(cards.length > 0 || !showArchived) && !showArchived && (
         <button
           onClick={() => setShowAddModal(true)}
           className="fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-material-lg flex items-center justify-center hover:bg-blue-700 transition-colors z-20"

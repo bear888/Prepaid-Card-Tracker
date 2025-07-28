@@ -88,13 +88,6 @@ export class LocalStorageService {
     };
 
     card.transactions.unshift(transaction);
-    
-    // Auto-archive if balance reaches zero
-    const newBalance = this.getBalance(card);
-    if (newBalance <= 0 && !card.isArchived) {
-      card.isArchived = true;
-    }
-    
     this.saveCards();
     return transaction;
   }
@@ -120,6 +113,24 @@ export class LocalStorageService {
     if (card.initialValue === 0) return 0;
     const totalSpent = card.transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
     return Math.min((totalSpent / card.initialValue) * 100, 100);
+  }
+
+  archiveCard(id: string): boolean {
+    const card = this.getCard(id);
+    if (!card) return false;
+
+    card.isArchived = true;
+    this.saveCards();
+    return true;
+  }
+
+  unarchiveCard(id: string): boolean {
+    const card = this.getCard(id);
+    if (!card) return false;
+
+    card.isArchived = false;
+    this.saveCards();
+    return true;
   }
 
   getLastUsed(card: Card): string {
