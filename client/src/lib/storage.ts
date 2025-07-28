@@ -33,6 +33,14 @@ export class LocalStorageService {
     return [...this.cards];
   }
 
+  getActiveCards(): Card[] {
+    return this.cards.filter(card => !card.isArchived);
+  }
+
+  getArchivedCards(): Card[] {
+    return this.cards.filter(card => card.isArchived);
+  }
+
   getCard(id: string): Card | undefined {
     return this.cards.find(card => card.id === id);
   }
@@ -43,6 +51,7 @@ export class LocalStorageService {
       id: Date.now().toString(),
       createdAt: new Date().toISOString(),
       transactions: [],
+      isArchived: false,
     };
     
     this.cards.push(card);
@@ -79,6 +88,13 @@ export class LocalStorageService {
     };
 
     card.transactions.unshift(transaction);
+    
+    // Auto-archive if balance reaches zero
+    const newBalance = this.getBalance(card);
+    if (newBalance <= 0 && !card.isArchived) {
+      card.isArchived = true;
+    }
+    
     this.saveCards();
     return transaction;
   }

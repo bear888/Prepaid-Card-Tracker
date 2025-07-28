@@ -20,6 +20,7 @@ export interface Card extends InsertCard {
   id: string;
   createdAt: string;
   transactions: Transaction[];
+  isArchived: boolean;
 }
 
 export interface Transaction extends InsertTransaction {
