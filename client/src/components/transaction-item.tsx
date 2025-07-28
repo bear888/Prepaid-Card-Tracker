@@ -2,6 +2,7 @@ import { Minus, Edit } from "lucide-react";
 import { Transaction } from "@shared/schema";
 import { storage } from "@/lib/storage";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +17,24 @@ interface TransactionItemProps {
 }
 
 export default function TransactionItem({ transaction, cardId, onDelete }: TransactionItemProps) {
+  const { toast } = useToast();
+  
   const handleDelete = () => {
-    storage.deleteTransaction(cardId, transaction.id);
-    onDelete();
+    const success = storage.deleteTransaction(cardId, transaction.id);
+    if (success) {
+      onDelete();
+      toast({
+        title: "Transaction Deleted",
+        description: "The transaction has been removed successfully.",
+      });
+    } else {
+      console.error("Failed to delete transaction:", transaction.id);
+      toast({
+        title: "Delete Failed", 
+        description: "Could not delete the transaction. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -32,9 +48,15 @@ export default function TransactionItem({ transaction, cardId, onDelete }: Trans
     });
   };
 
+  // Calculate what the balance was after this specific transaction
   const card = storage.getCard(cardId);
-  const currentBalance = card ? storage.getBalance(card) : 0;
-  const balanceAfter = currentBalance + transaction.amount;
+  if (!card) return null;
+  
+  // Find the index of this transaction to calculate balance at that point
+  const transactionIndex = card.transactions.findIndex(t => t.id === transaction.id);
+  const transactionsAfterThis = card.transactions.slice(0, transactionIndex);
+  const totalSpentAfterThis = transactionsAfterThis.reduce((sum, t) => sum + t.amount, 0);
+  const balanceAfter = card.initialValue - totalSpentAfterThis;
 
   return (
     <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
