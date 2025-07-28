@@ -31,13 +31,13 @@ export default function EditTransactionModal({
   const [amount, setAmount] = useState("");
   const { toast } = useToast();
 
-  // Reset form when transaction changes
+  // Reset form when modal opens or transaction changes
   React.useEffect(() => {
-    if (transaction) {
+    if (transaction && isOpen) {
       setDescription(transaction.description);
       setAmount(transaction.amount.toString());
     }
-  }, [transaction]);
+  }, [transaction, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

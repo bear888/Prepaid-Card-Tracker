@@ -98,7 +98,7 @@ export default function CardList() {
             /* Card List */
             cards.map((card) => (
               <CardItem
-                key={card.id}
+                key={`${card.id}-${card.name}-${card.initialValue}`}
                 card={card}
                 onDelete={handleCardDeleted}
                 onArchiveChange={loadCards}

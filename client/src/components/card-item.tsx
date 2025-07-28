@@ -65,6 +65,7 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
 
   const handleCardUpdated = () => {
     onArchiveChange(); // Refresh the card list
+    // Force component re-render by updating key prop or similar mechanism
   };
 
   return (

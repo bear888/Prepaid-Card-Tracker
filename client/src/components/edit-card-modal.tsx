@@ -25,14 +25,14 @@ export default function EditCardModal({ card, isOpen, onClose, onCardUpdated }: 
   const [initialValue, setInitialValue] = useState("");
   const { toast } = useToast();
 
-  // Reset form when card changes
+  // Reset form when modal opens or card changes
   React.useEffect(() => {
-    if (card) {
+    if (card && isOpen) {
       setName(card.name);
       setNumber(card.number || "");
       setInitialValue(card.initialValue.toString());
     }
-  }, [card]);
+  }, [card, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

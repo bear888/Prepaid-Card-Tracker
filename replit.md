@@ -119,3 +119,11 @@ The prepaid card tracker is fully functional with local storage, transaction man
 - ✓ Archive option available for any card regardless of balance
 - ✓ Archive/restore options in card dropdown menu with toast notifications
 - ✓ Enhanced storage service with backward compatibility for existing cards
+
+### January 28, 2025 - Edit Functionality Update
+- ✓ Added edit card functionality (name, number, initial balance)
+- ✓ Added edit transaction functionality (description, amount)
+- ✓ Created edit modals with form validation and error handling
+- ✓ Fixed form reset issues when reopening edit modals
+- ✓ Enhanced component re-rendering after updates with dynamic keys
+- ✓ Added edit options to dropdown menus with proper icons
