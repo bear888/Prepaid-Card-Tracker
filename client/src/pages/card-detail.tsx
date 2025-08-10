@@ -35,6 +35,13 @@ export default function CardDetail() {
     }
   };
 
+  const handleTransactionEdited = () => {
+    if (params?.id) {
+      const updatedCard = storage.getCard(params.id);
+      setCard(updatedCard || null);
+    }
+  };
+
   const handleBack = () => {
     setLocation("/");
   };
@@ -132,7 +139,7 @@ export default function CardDetail() {
                 transaction={transaction}
                 cardId={card.id}
                 onDelete={handleTransactionDeleted}
-                onEdit={handleTransactionDeleted}
+                onEdit={handleTransactionEdited}
               />
             ))}
           </div>
