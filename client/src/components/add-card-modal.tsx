@@ -17,6 +17,7 @@ export default function AddCardModal({ isOpen, onClose, onCardAdded }: AddCardMo
   const [formData, setFormData] = useState<InsertCard>({
     name: "",
     number: "",
+    pin: "",
     initialValue: 0,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -40,7 +41,7 @@ export default function AddCardModal({ isOpen, onClose, onCardAdded }: AddCardMo
     try {
       storage.addCard(result.data);
       onCardAdded();
-      setFormData({ name: "", number: "", initialValue: 0 });
+      setFormData({ name: "", number: "", pin: "", initialValue: 0 });
       setErrors({});
       toast({
         title: "Card Added",
@@ -88,6 +89,19 @@ export default function AddCardModal({ isOpen, onClose, onCardAdded }: AddCardMo
               className={errors.name ? "border-red-500" : ""}
             />
             {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name}</p>}
+          </div>
+
+          <div>
+            <Label htmlFor="card-pin" className="text-sm font-medium text-gray-700 mb-2">
+              PIN (Optional)
+            </Label>
+            <Input
+              id="card-pin"
+              type="text"
+              value={formData.pin}
+              onChange={(e) => handleInputChange("pin", e.target.value)}
+              placeholder="e.g., 1234"
+            />
           </div>
 
           <div>
