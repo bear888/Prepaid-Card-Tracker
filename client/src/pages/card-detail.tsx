@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
-import { ArrowLeft, Plus, CreditCard } from "lucide-react";
+import { ArrowLeft, Plus, CreditCard, KeyRound, Barcode as BarcodeIcon, QrCode } from "lucide-react";
+import Barcode from "react-barcode";
 import { Card } from "@shared/schema";
 import { storage } from "@/lib/storage";
 import TransactionItem from "@/components/transaction-item";
@@ -12,6 +13,7 @@ export default function CardDetail() {
   const [, setLocation] = useLocation();
   const [card, setCard] = useState<Card | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showBarcode, setShowBarcode] = useState<"1d" | "qr" | null>(null);
 
   useEffect(() => {
     if (match && params?.id) {
@@ -109,7 +111,45 @@ export default function CardDetail() {
             <p className="text-lg font-medium">${card.initialValue.toFixed(2)}</p>
           </div>
         </div>
+
+        {(card.pin || card.number) && (
+          <div className="mt-4 pt-4 border-t border-white border-opacity-20 flex items-center justify-between">
+            {card.pin && (
+              <div className="flex items-center">
+                <KeyRound className="w-5 h-5 mr-2" />
+                <p className="text-lg font-mono">{card.pin}</p>
+              </div>
+            )}
+            {card.number && (
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" onClick={() => setShowBarcode("1d")} className="p-2 h-auto rounded-md bg-white bg-opacity-20 hover:bg-opacity-30">
+                  <BarcodeIcon className="w-6 h-6" />
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setShowBarcode("qr")} className="p-2 h-auto rounded-md bg-white bg-opacity-20 hover:bg-opacity-30">
+                  <QrCode className="w-6 h-6" />
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {showBarcode && card.number && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center"
+          onClick={() => setShowBarcode(null)}
+        >
+          <div className="bg-white p-8 rounded-lg" onClick={(e) => e.stopPropagation()}>
+            <Barcode
+              value={card.number}
+              format={showBarcode === "qr" ? "QRCODE" : "CODE128"}
+              width={showBarcode === '1d' ? 2 : 1}
+              height={showBarcode === '1d' ? 100 : undefined}
+              displayValue={true}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Transaction List */}
       <div className="p-4 pb-20">

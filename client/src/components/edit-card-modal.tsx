@@ -22,6 +22,7 @@ interface EditCardModalProps {
 export default function EditCardModal({ card, isOpen, onClose, onCardUpdated }: EditCardModalProps) {
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
+  const [pin, setPin] = useState("");
   const [initialValue, setInitialValue] = useState("");
   const { toast } = useToast();
 
@@ -30,6 +31,7 @@ export default function EditCardModal({ card, isOpen, onClose, onCardUpdated }: 
     if (card && isOpen) {
       setName(card.name);
       setNumber(card.number || "");
+      setPin(card.pin || "");
       setInitialValue(card.initialValue.toString());
     }
   }, [card, isOpen]);
@@ -42,6 +44,7 @@ export default function EditCardModal({ card, isOpen, onClose, onCardUpdated }: 
     const updates = {
       name: name.trim(),
       number: number.trim() || undefined,
+      pin: pin.trim() || undefined,
       initialValue: parseFloat(initialValue)
     };
 
@@ -108,6 +111,17 @@ export default function EditCardModal({ card, isOpen, onClose, onCardUpdated }: 
               value={number}
               onChange={(e) => setNumber(e.target.value)}
               placeholder="e.g., 1234567890123456"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="pin">PIN (Optional)</Label>
+            <Input
+              id="pin"
+              type="text"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              placeholder="e.g., 1234"
             />
           </div>
 

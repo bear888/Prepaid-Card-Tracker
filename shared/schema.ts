@@ -3,6 +3,7 @@ import { z } from "zod";
 export const insertCardSchema = z.object({
   name: z.string().min(1, "Card name is required"),
   number: z.string().optional(),
+  pin: z.string().optional(),
   initialValue: z.number().min(0, "Initial value must be positive"),
 });
 
