@@ -58,7 +58,8 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
     }
   };
 
-  const handleEdit = () => {
+  const handleEdit = (e: Event) => {
+    e.stopPropagation();
     setShowEditModal(true);
   };
 
@@ -101,11 +102,11 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="p-2 text-gray-400 hover:text-gray-600" onClick={(e) => e.stopPropagation()}>
+            <Button variant="ghost" size="sm" className="p-2 text-gray-400 hover:text-gray-600">
               <MoreHorizontal className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+          <DropdownMenuContent>
             <DropdownMenuItem onSelect={handleEdit}>
               <Edit className="w-4 h-4 mr-2" />
               Edit Card
