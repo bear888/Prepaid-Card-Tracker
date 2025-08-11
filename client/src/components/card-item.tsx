@@ -1,71 +1,20 @@
-import { MoreHorizontal, CreditCard, Archive, ArchiveRestore, Edit } from "lucide-react";
-import { useState } from "react";
+import { CreditCard, Archive } from "lucide-react";
 import { useLocation } from "wouter";
 import { Card } from "@shared/schema";
 import { storage } from "@/lib/storage";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import EditCardModal from "@/components/edit-card-modal";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface CardItemProps {
   card: Card;
-  onDelete: () => void;
-  onArchiveChange: () => void;
 }
 
-export default function CardItem({ card, onDelete, onArchiveChange }: CardItemProps) {
+export default function CardItem({ card }: CardItemProps) {
   const [, setLocation] = useLocation();
-  const [showEditModal, setShowEditModal] = useState(false);
-  const { toast } = useToast();
   const balance = storage.getBalance(card);
   const usagePercentage = storage.getUsagePercentage(card);
   const lastUsed = storage.getLastUsed(card);
 
   const handleCardClick = () => {
     setLocation(`/card/${card.id}`);
-  };
-
-  const handleDelete = () => {
-    storage.deleteCard(card.id);
-    onDelete();
-  };
-
-  const handleArchive = () => {
-    const success = storage.archiveCard(card.id);
-    if (success) {
-      onArchiveChange();
-      toast({
-        title: "Card Archived",
-        description: `${card.name} has been moved to archives.`,
-      });
-    }
-  };
-
-  const handleUnarchive = () => {
-    const success = storage.unarchiveCard(card.id);
-    if (success) {
-      onArchiveChange();
-      toast({
-        title: "Card Restored",
-        description: `${card.name} has been moved back to active cards.`,
-      });
-    }
-  };
-
-  const handleEdit = (e: Event) => {
-    e.stopPropagation();
-    setShowEditModal(true);
-  };
-
-  const handleCardUpdated = () => {
-    onArchiveChange(); // Refresh the card list
-    // Force component re-render by updating key prop or similar mechanism
   };
 
   return (
@@ -100,33 +49,6 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
             )}
           </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="p-2 text-gray-400 hover:text-gray-600">
-              <MoreHorizontal className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onSelect={handleEdit}>
-              <Edit className="w-4 h-4 mr-2" />
-              Edit Card
-            </DropdownMenuItem>
-            {card.isArchived ? (
-              <DropdownMenuItem onClick={handleUnarchive}>
-                <ArchiveRestore className="w-4 h-4 mr-2" />
-                Restore Card
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem onClick={handleArchive}>
-                <Archive className="w-4 h-4 mr-2" />
-                Archive Card
-              </DropdownMenuItem>
-            )}
-            <DropdownMenuItem onClick={handleDelete} className="text-red-600">
-              Delete Card
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
 
       <div className="flex items-center justify-between">
@@ -153,13 +75,6 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
           />
         </div>
       </div>
-
-      <EditCardModal
-        card={card}
-        isOpen={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onCardUpdated={handleCardUpdated}
-      />
     </div>
   );
 }

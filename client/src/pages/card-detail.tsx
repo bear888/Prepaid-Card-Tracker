@@ -1,21 +1,39 @@
 import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
-import { ArrowLeft, Plus, CreditCard, KeyRound, Barcode as BarcodeIcon, QrCode } from "lucide-react";
+import { ArrowLeft, Plus, CreditCard, KeyRound, Barcode as BarcodeIcon, QrCode, MoreVertical, Edit, Archive, ArchiveRestore } from "lucide-react";
 import Barcode from "react-barcode";
 import { Card } from "@shared/schema";
 import { storage } from "@/lib/storage";
 import TransactionItem from "@/components/transaction-item";
 import AddTransactionModal from "@/components/add-transaction-modal";
+import EditCardModal from "@/components/edit-card-modal";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function CardDetail() {
   const [match, params] = useRoute("/card/:id");
   const [, setLocation] = useLocation();
   const [card, setCard] = useState<Card | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [showBarcode, setShowBarcode] = useState<"1d" | "qr" | null>(null);
+  const { toast } = useToast();
+
+  const loadCard = () => {
+    if (match && params?.id) {
+      const foundCard = storage.getCard(params.id);
+      setCard(foundCard || null);
+    }
+  };
 
   useEffect(() => {
+    loadCard();
     if (match && params?.id) {
       const foundCard = storage.getCard(params.id);
       setCard(foundCard || null);
@@ -47,6 +65,48 @@ export default function CardDetail() {
 
   const handleBack = () => {
     setLocation("/");
+  };
+
+  const handleEdit = () => {
+    setShowEditModal(true);
+  };
+
+  const handleCardUpdated = () => {
+    loadCard();
+    setShowEditModal(false);
+  };
+
+  const handleDelete = () => {
+    if (card) {
+      storage.deleteCard(card.id);
+      toast({
+        title: "Card Deleted",
+        description: `${card.name} has been deleted.`,
+      });
+      setLocation("/");
+    }
+  };
+
+  const handleArchive = () => {
+    if (card) {
+      storage.archiveCard(card.id);
+      loadCard();
+      toast({
+        title: "Card Archived",
+        description: `${card.name} has been moved to archives.`,
+      });
+    }
+  };
+
+  const handleUnarchive = () => {
+    if (card) {
+      storage.unarchiveCard(card.id);
+      loadCard();
+      toast({
+        title: "Card Restored",
+        description: `${card.name} has been moved back to active cards.`,
+      });
+    }
   };
 
   if (!card) {
@@ -81,9 +141,37 @@ export default function CardDetail() {
             </Button>
             <h1 className="text-xl font-medium">{card.name}</h1>
           </div>
-          <button className="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors">
-            <i className="fas fa-ellipsis-v"></i>
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors text-white"
+              >
+                <MoreVertical className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onSelect={handleEdit}>
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Card
+              </DropdownMenuItem>
+              {card.isArchived ? (
+                <DropdownMenuItem onSelect={handleUnarchive}>
+                  <ArchiveRestore className="w-4 h-4 mr-2" />
+                  Restore Card
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem onSelect={handleArchive}>
+                  <Archive className="w-4 h-4 mr-2" />
+                  Archive Card
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem onSelect={handleDelete} className="text-red-600">
+                Delete Card
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </header>
 
@@ -193,6 +281,13 @@ export default function CardDetail() {
         onClose={() => setShowAddModal(false)}
         onTransactionAdded={handleTransactionAdded}
         cardId={card.id}
+      />
+
+      <EditCardModal
+        card={card}
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onCardUpdated={handleCardUpdated}
       />
     </>
   );
