@@ -67,9 +67,9 @@ export default function TransactionItem({ transaction, cardId, onDelete, onEdit 
   
   // Find the index of this transaction to calculate balance at that point
   const transactionIndex = card.transactions.findIndex(t => t.id === transaction.id);
-  const transactionsAfterThis = card.transactions.slice(0, transactionIndex);
-  const totalSpentAfterThis = transactionsAfterThis.reduce((sum, t) => sum + t.amount, 0);
-  const balanceAfter = card.initialValue - totalSpentAfterThis;
+  const transactionsUpToThis = card.transactions.slice(0, transactionIndex + 1);
+  const totalSpentUpToThis = transactionsUpToThis.reduce((sum, t) => sum + t.amount, 0);
+  const balanceAfter = card.initialValue - totalSpentUpToThis;
 
   return (
     <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
