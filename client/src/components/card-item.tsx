@@ -58,8 +58,7 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
     }
   };
 
-  const handleEdit = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEdit = () => {
     setShowEditModal(true);
   };
 
@@ -101,13 +100,13 @@ export default function CardItem({ card, onDelete, onArchiveChange }: CardItemPr
           </div>
         </div>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="sm" className="p-2 text-gray-400 hover:text-gray-600">
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="p-2 text-gray-400 hover:text-gray-600" onClick={(e) => e.stopPropagation()}>
               <MoreHorizontal className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={handleEdit}>
+          <DropdownMenuContent onClick={(e) => e.stopPropagation()}>
+            <DropdownMenuItem onSelect={handleEdit}>
               <Edit className="w-4 h-4 mr-2" />
               Edit Card
             </DropdownMenuItem>
