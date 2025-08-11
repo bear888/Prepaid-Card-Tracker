@@ -23,7 +23,7 @@ export default function CardDetail() {
   const handleTransactionAdded = () => {
     if (params?.id) {
       const updatedCard = storage.getCard(params.id);
-      setCard(updatedCard || null);
+      setCard(updatedCard ? { ...updatedCard, transactions: [...updatedCard.transactions] } : null);
       setShowAddModal(false);
     }
   };
@@ -31,14 +31,15 @@ export default function CardDetail() {
   const handleTransactionDeleted = () => {
     if (params?.id) {
       const updatedCard = storage.getCard(params.id);
-      setCard(updatedCard || null);
+      setCard(updatedCard ? { ...updatedCard, transactions: [...updatedCard.transactions] } : null);
     }
   };
 
   const handleTransactionEdited = () => {
     if (params?.id) {
       const updatedCard = storage.getCard(params.id);
-      setCard(updatedCard || null);
+      // Create a new object to force a re-render
+      setCard(updatedCard ? { ...updatedCard, transactions: [...updatedCard.transactions] } : null);
     }
   };
 
