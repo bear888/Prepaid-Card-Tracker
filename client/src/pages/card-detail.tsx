@@ -143,8 +143,8 @@ export default function CardDetail() {
             <Barcode
               value={card.number}
               format={showBarcode === "qr" ? "QRCODE" : "CODE128"}
-              width={showBarcode === '1d' ? 2 : undefined}
-              height={showBarcode === '1d' ? 100 : undefined}
+              width={showBarcode === '1d' ? 2 : 256}
+              height={showBarcode === '1d' ? 100 : 256}
               displayValue={true}
             />
           </div>
