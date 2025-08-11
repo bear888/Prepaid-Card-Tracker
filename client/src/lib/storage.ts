@@ -131,13 +131,14 @@ export class LocalStorageService {
     return true;
   }
 
-  updateCard(id: string, updates: Partial<Pick<Card, 'name' | 'number' | 'initialValue'>>): boolean {
+  updateCard(id: string, updates: Partial<Pick<Card, 'name' | 'number' | 'initialValue' | 'pin'>>): boolean {
     const card = this.getCard(id);
     if (!card) return false;
 
     if (updates.name !== undefined) card.name = updates.name;
     if (updates.number !== undefined) card.number = updates.number;
     if (updates.initialValue !== undefined) card.initialValue = updates.initialValue;
+    if (updates.pin !== undefined) card.pin = updates.pin;
 
     this.saveCards();
     return true;

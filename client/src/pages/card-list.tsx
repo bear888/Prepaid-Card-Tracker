@@ -28,9 +28,6 @@ export default function CardList() {
     setShowAddModal(false);
   };
 
-  const handleCardDeleted = () => {
-    loadCards();
-  };
 
   return (
     <>
@@ -100,8 +97,6 @@ export default function CardList() {
               <CardItem
                 key={`${card.id}-${card.name}-${card.initialValue}`}
                 card={card}
-                onDelete={handleCardDeleted}
-                onArchiveChange={loadCards}
               />
             ))
           )}
