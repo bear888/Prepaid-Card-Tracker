@@ -6,6 +6,16 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import EditTransactionModal from "@/components/edit-transaction-modal";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -21,6 +31,7 @@ interface TransactionItemProps {
 
 export default function TransactionItem({ transaction, cardId, onDelete, onEdit }: TransactionItemProps) {
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { toast } = useToast();
   
   const handleDelete = () => {
@@ -107,7 +118,13 @@ export default function TransactionItem({ transaction, cardId, onDelete, onEdit 
               <Edit className="w-4 h-4 mr-2" />
               Edit Transaction
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDelete} className="text-red-600">
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.preventDefault();
+                setShowDeleteConfirm(true);
+              }}
+              className="text-red-600"
+            >
               <Minus className="w-4 h-4 mr-2" />
               Delete Transaction
             </DropdownMenuItem>
@@ -122,6 +139,22 @@ export default function TransactionItem({ transaction, cardId, onDelete, onEdit 
         onClose={() => setShowEditModal(false)}
         onTransactionUpdated={handleTransactionUpdated}
       />
+
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this
+              transaction.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
