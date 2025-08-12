@@ -32,6 +32,7 @@ export class MemStorage implements IStorage {
     const card: Card = {
       ...insertCard,
       id,
+      isArchived: false,
       createdAt: new Date().toISOString(),
       transactions: [],
     };

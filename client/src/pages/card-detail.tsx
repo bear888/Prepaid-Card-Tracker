@@ -10,6 +10,16 @@ import EditCardModal from "@/components/edit-card-modal";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -22,6 +32,7 @@ export default function CardDetail() {
   const [card, setCard] = useState<Card | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showBarcode, setShowBarcode] = useState<"1d" | "qr" | null>(null);
   const { toast } = useToast();
 
@@ -167,7 +178,13 @@ export default function CardDetail() {
                   Archive Card
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onSelect={handleDelete} className="text-red-600">
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setShowDeleteConfirm(true);
+                }}
+                className="text-red-600"
+              >
                 Delete Card
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -230,7 +247,7 @@ export default function CardDetail() {
           <div className="bg-white p-8 rounded-lg" onClick={(e) => e.stopPropagation()}>
             <Barcode
               value={card.number}
-              format={showBarcode === "qr" ? "QRCODE" : "CODE128"}
+              format={showBarcode === "qr" ? ("QRCODE" as any) : "CODE128"}
               width={showBarcode === '1d' ? 2 : 256}
               height={showBarcode === '1d' ? 100 : 256}
               displayValue={true}
@@ -289,6 +306,22 @@ export default function CardDetail() {
         onClose={() => setShowEditModal(false)}
         onCardUpdated={handleCardUpdated}
       />
+
+      <AlertDialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your card
+              and all of its transactions.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
