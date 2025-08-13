@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route } from "wouter";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import PWAInstallBanner from "@/components/pwa-install-banner";
@@ -8,13 +8,11 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
     return (
-        <WouterRouter base="/prepaid-card-tracker">
-            <Switch>
-                <Route path="/" component={CardList} />
-                <Route path="/card/:id" component={CardDetail} />
-                <Route component={NotFound} />
-            </Switch>
-        </WouterRouter>
+        <Switch>
+            <Route path="/" component={CardList} />
+            <Route path="/card/:id" component={CardDetail} />
+            <Route component={NotFound} />
+        </Switch>
     );
 }
 
