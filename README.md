@@ -1,3 +1,5 @@
+<img src="images/prepaid-card-tracker.png" width="256">
+
 # Prepaid Card Tracker
 
 A mobile-first web application for tracking prepaid card balances and transactions with local-only data storage. No server, no cloud, no account registration required.
