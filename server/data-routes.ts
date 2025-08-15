@@ -1,6 +1,7 @@
 import type { Router } from "express";
 import { storage } from "./storage";
 import multer from "multer";
+import { logToFile } from "./logger";
 import { z } from "zod";
 import { insertCardSchema, insertTransactionSchema } from "@shared/schema";
 
@@ -23,6 +24,7 @@ const uploadDataSchema = z.object({
 export function registerDataRoutes(router: Router) {
   router.get("/data/download", async (req, res) => {
     const cards = await storage.getAllCards();
+    logToFile(`Downloading data. Number of cards in storage: ${cards.length}`);
     res.json({ cards });
   });
 

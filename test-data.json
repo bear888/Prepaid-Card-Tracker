@@ -1,0 +1,22 @@
+{
+  "cards": [
+    {
+      "id": "1",
+      "name": "Test Card 1",
+      "number": "1234",
+      "pin": "123",
+      "initialValue": 100,
+      "isArchived": false,
+      "createdAt": "2023-01-01T00:00:00.000Z",
+      "transactions": [
+        {
+          "id": "t1",
+          "cardId": "1",
+          "description": "Test Transaction 1",
+          "amount": 10,
+          "date": "2023-01-01T00:00:00.000Z"
+        }
+      ]
+    }
+  ]
+}
