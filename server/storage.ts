@@ -10,6 +10,7 @@ export interface IStorage {
   deleteCard(id: string): Promise<boolean>;
   addTransaction(transaction: InsertTransaction): Promise<Transaction | null>;
   deleteTransaction(cardId: string, transactionId: string): Promise<boolean>;
+  replaceAll(cards: Card[]): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -78,6 +79,13 @@ export class MemStorage implements IStorage {
     card.transactions.splice(transactionIndex, 1);
     this.cards.set(cardId, card);
     return true;
+  }
+
+  async replaceAll(cards: Card[]): Promise<void> {
+    this.cards.clear();
+    for (const card of cards) {
+      this.cards.set(card.id, card);
+    }
   }
 }
 

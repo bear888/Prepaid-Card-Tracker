@@ -1,15 +1,38 @@
 import { useState, useEffect } from "react";
-import { Plus } from "lucide-react";
+import { Plus, MoreVertical, Download, Upload } from "lucide-react";
 import { Card } from "@shared/schema";
 import { storage } from "@/lib/storage";
 import CardItem from "@/components/card-item";
 import AddCardModal from "@/components/add-card-modal";
+import UploadDataModal from "@/components/upload-data-modal";
 
 export default function CardList() {
   const [cards, setCards] = useState<Card[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
-
+  const [showUploadModal, setShowUploadModal] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  const handleDownload = async () => {
+    try {
+      const response = await fetch("/api/data/download");
+      const data = await response.json();
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "card-data.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setShowMenu(false);
+    } catch (error) {
+      console.error("Failed to download data", error);
+    }
+  };
 
   const loadCards = () => {
     if (showArchived) {
@@ -29,17 +52,66 @@ export default function CardList() {
   };
 
 
+  const handleUploadComplete = async () => {
+    setShowUploadModal(false);
+    setIsSyncing(true);
+    try {
+      const response = await fetch('/api/data/download');
+      const data = await response.json();
+      localStorage.setItem("prepaid-cards", JSON.stringify(data.cards));
+      storage.loadCards();
+      loadCards();
+    } catch (error) {
+      console.error("Failed to sync data with server", error);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   return (
     <>
+      {isSyncing && (
+        <div className="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
+            <div className="text-center">
+                <p>Syncing data...</p>
+            </div>
+        </div>
+      )}
       {/* Header */}
       <header className="bg-primary text-white p-4 shadow-material sticky top-0 z-10">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-medium">My Cards</h1>
-          <button className="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors">
-            <i className="fas fa-ellipsis-v"></i>
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowMenu(!showMenu)}
+              className="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </button>
+            {showMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
+                <button
+                  onClick={handleDownload}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download Data
+                </button>
+                <button
+                  onClick={() => {
+                    setShowUploadModal(true);
+                    setShowMenu(false);
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload Data
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-        
+
         {/* Archive Toggle */}
         <div className="flex space-x-1 bg-white bg-opacity-20 rounded-lg p-1">
           <button
@@ -118,6 +190,12 @@ export default function CardList() {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         onCardAdded={handleCardAdded}
+      />
+
+      <UploadDataModal
+        isOpen={showUploadModal}
+        onClose={() => setShowUploadModal(false)}
+        onUploadComplete={handleUploadComplete}
       />
     </>
   );

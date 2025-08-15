@@ -9,7 +9,7 @@ export class LocalStorageService {
     this.loadCards();
   }
 
-  private loadCards(): void {
+  loadCards(): void {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
