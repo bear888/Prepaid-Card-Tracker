@@ -5,8 +5,8 @@
     },
     "rewrites": [
         {
-            "source": "/prepaid-card-tracker",
-            "destination": "/prepaid-card-tracker/index.html"
+            "source": "/",
+            "destination": "/index.html"
         }
     ]
 }
