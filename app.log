@@ -6,3 +6,4 @@
 Browserslist: browsers data (caniuse-lite) is 16 months old. Please run:
   npx update-browserslist-db@latest
   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+11:27:38 PM [vite] hmr update /src/pages/card-list.tsx, /src/index.css?v=OjdtWRVtO8hwQxRxJpib7

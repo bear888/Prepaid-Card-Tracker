@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus } from "lucide-react";
+import { Plus, MoreVertical } from "lucide-react";
 import { Card } from "@shared/schema";
 import { storage } from "@/lib/storage";
 import CardItem from "@/components/card-item";
@@ -50,7 +50,7 @@ export default function CardList() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors">
-                <i className="fas fa-ellipsis-v"></i>
+                <MoreVertical className="w-5 h-5" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
