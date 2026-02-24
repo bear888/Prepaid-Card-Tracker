@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
 import { ArrowLeft, Plus, CreditCard, KeyRound, Barcode as BarcodeIcon, QrCode, MoreVertical, Edit, Archive, ArchiveRestore } from "lucide-react";
 import Barcode from "react-barcode";
+import QRCode from "react-qr-code";
 import { Card } from "@shared/schema";
 import { storage } from "@/lib/storage";
 import TransactionItem from "@/components/transaction-item";
@@ -245,13 +246,17 @@ export default function CardDetail() {
           onClick={() => setShowBarcode(null)}
         >
           <div className="bg-white p-8 rounded-lg" onClick={(e) => e.stopPropagation()}>
-            <Barcode
-              value={card.number}
-              format={showBarcode === "qr" ? ("QRCODE" as any) : "CODE128"}
-              width={showBarcode === '1d' ? 2 : 256}
-              height={showBarcode === '1d' ? 100 : 256}
-              displayValue={true}
-            />
+            {showBarcode === "qr" ? (
+              <QRCode value={card.number} size={256} />
+            ) : (
+              <Barcode
+                value={card.number}
+                format="CODE128"
+                width={2}
+                height={100}
+                displayValue={true}
+              />
+            )}
           </div>
         </div>
       )}
