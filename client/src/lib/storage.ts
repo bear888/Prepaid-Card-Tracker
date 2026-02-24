@@ -17,7 +17,10 @@ export class LocalStorageService {
         // Ensure all cards have isArchived property for backward compatibility
         this.cards = parsedCards.map((card: any) => ({
           ...card,
-          isArchived: card.isArchived || false
+          isArchived: card.isArchived || false,
+          transactions: (card.transactions || []).sort((a: Transaction, b: Transaction) =>
+            new Date(a.date).getTime() - new Date(b.date).getTime()
+          )
         }));
       }
     } catch (error) {
@@ -85,7 +88,7 @@ export class LocalStorageService {
       date: new Date().toISOString(),
     };
 
-    card.transactions.unshift(transaction);
+    card.transactions.push(transaction);
     this.saveCards();
     return transaction;
   }
@@ -161,7 +164,7 @@ export class LocalStorageService {
   getLastUsed(card: Card): string {
     if (card.transactions.length === 0) return "Never used";
     
-    const lastTransaction = card.transactions[0];
+    const lastTransaction = card.transactions[card.transactions.length - 1];
     const lastUsedDate = new Date(lastTransaction.date);
     const now = new Date();
     const diffTime = Math.abs(now.getTime() - lastUsedDate.getTime());
