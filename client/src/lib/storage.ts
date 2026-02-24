@@ -161,6 +161,30 @@ export class LocalStorageService {
     return true;
   }
 
+  importCards(importCards: Card[]): void {
+    importCards.forEach(importCard => {
+      // Generate new ID to avoid collision
+      const newCardId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+
+      const newCard: Card = {
+        ...importCard,
+        id: newCardId,
+        // Preserve createdAt if available, otherwise set new
+        createdAt: importCard.createdAt || new Date().toISOString(),
+        transactions: (importCard.transactions || []).map(t => ({
+          ...t,
+          id: Date.now().toString() + Math.random().toString(36).substring(2, 9), // New Transaction ID
+          cardId: newCardId
+        })),
+        // Ensure isArchived is boolean
+        isArchived: !!importCard.isArchived
+      };
+
+      this.cards.push(newCard);
+    });
+    this.saveCards();
+  }
+
   getLastUsed(card: Card): string {
     if (card.transactions.length === 0) return "Never used";
     
