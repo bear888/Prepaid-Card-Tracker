@@ -63,7 +63,7 @@ export class MemStorage implements IStorage {
       date: new Date().toISOString(),
     };
 
-    card.transactions.unshift(transaction);
+    card.transactions.push(transaction);
     this.cards.set(card.id, card);
     return transaction;
   }
